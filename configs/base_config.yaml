@@ -1,0 +1,60 @@
+# Base configuration for satellite detection and segmentation
+
+project:
+  name: "satellite-detection-segmentation"
+  version: "0.1.0"
+  description: "Satellite detection and segmentation using CNN and Transformer models"
+
+data:
+  raw_path: "/home/tanman/datasets/playground/NAPA2_Audacity_v2_training/images/"
+  groundtruth_file: "/home/tanman/datasets/playground/NAPA2_Audacity_v2_training/groundtruth.csv"
+  real_test_path: "/home/tanman/datasets/playground/NAPA2_Audacity_v2_training/spacecloud/"
+  processed_path: "data/processed/"
+  splits_path: "data/splits/"
+  
+  # Data splits
+  train_ratio: 0.7
+  val_ratio: 0.15
+  test_ratio: 0.15
+  
+  # Cross validation
+  cv_folds: 5
+  
+  # Image preprocessing
+  image_size: [512, 512]
+  normalize: true
+  augmentation: true
+
+training:
+  batch_size: 16
+  num_epochs: 100
+  learning_rate: 0.001
+  optimizer: "adamw"
+  scheduler: "cosine"
+  warmup_epochs: 5
+  
+  # Loss weights
+  detection_loss_weight: 1.0
+  segmentation_loss_weight: 1.0
+  
+  # Early stopping
+  patience: 10
+  min_delta: 0.001
+
+evaluation:
+  metrics:
+    detection: ["mAP@0.5", "mAP@0.5:0.95", "precision", "recall"]
+    segmentation: ["IoU", "dice", "pixel_accuracy"]
+  
+  visualization: true
+  save_predictions: true
+
+mlflow:
+  tracking_uri: "mlruns"
+  experiment_name: "satellite-detection"
+  
+hardware:
+  device: "cuda"
+  num_workers: 4
+  pin_memory: true
+  mixed_precision: true
