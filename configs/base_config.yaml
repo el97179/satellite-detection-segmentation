@@ -7,7 +7,7 @@ project:
 
 data:
   raw_path: "/home/tanman/datasets/playground/NAPA2_Audacity_v2_training/images/"
-  groundtruth_file: "/home/tanman/datasets/playground/NAPA2_Audacity_v2_training/groundtruth.csv"
+  groundtruth_file: "/home/tanman/datasets/playground/NAPA2_Audacity_v2_training/gt.json"
   real_test_path: "/home/tanman/datasets/playground/NAPA2_Audacity_v2_training/spacecloud/"
   processed_path: "data/processed/"
   splits_path: "data/splits/"
@@ -19,6 +19,11 @@ data:
   
   # Cross validation
   cv_folds: 5
+  
+  # Advanced splitting options
+  n_pose_clusters: 10  # Number of pose clusters for stratified splitting
+  stratified_splitting: true  # Use pose-based stratified splitting
+  pose_diversity_analysis: true  # Analyze and report pose diversity metrics
   
   # Image preprocessing
   image_size: [512, 512]
