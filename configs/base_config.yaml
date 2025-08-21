@@ -3,7 +3,7 @@
 project:
   name: "satellite-detection-segmentation"
   version: "0.1.0"
-  description: "Satellite detection and segmentation using CNN and Transformer models"
+  description: "Satellite detection using CNN models (U-Net, Faster R-CNN, YOLOv8)"
 
 data:
   raw_path: "/home/tanman/datasets/playground/NAPA2_Audacity_v2_training/images/"
@@ -40,7 +40,9 @@ training:
   
   # Loss weights
   detection_loss_weight: 1.0
-  segmentation_loss_weight: 1.0
+  bbox_regression_weight: 1.0
+  objectness_weight: 1.0
+  classification_weight: 1.0
   
   # Early stopping
   patience: 10
@@ -48,11 +50,58 @@ training:
 
 evaluation:
   metrics:
-    detection: ["mAP@0.5", "mAP@0.5:0.95", "precision", "recall"]
-    segmentation: ["IoU", "dice", "pixel_accuracy"]
+    detection: ["mAP@0.5", "mAP@0.5:0.95", "precision", "recall", "F1"]
+    bbox: ["IoU", "GIoU", "DIoU", "CIoU"]
   
   visualization: true
   save_predictions: true
+
+model:
+  type: "unet"  # Options: unet, fasterrcnn, yolov8
+  
+  # U-Net configuration (detection-focused)
+  unet:
+    n_channels: 3
+    num_classes: 1  # satellite detection (no background)
+    base_channels: 64
+    depth: 4
+    bilinear: true
+    use_attention: false
+    dropout_rate: 0.1
+    use_auxiliary_outputs: false
+    auxiliary_weight: 0.4
+    
+  # Faster R-CNN configuration  
+  fasterrcnn:
+    num_classes: 2  # background + satellite
+    backbone_name: "resnet50"
+    pretrained_backbone: true
+    trainable_backbone_layers: 3
+    min_size: 800
+    max_size: 1333
+    rpn_anchor_sizes: [32, 64, 128, 256, 512]
+    rpn_aspect_ratios: [0.5, 1.0, 2.0]
+    rpn_fg_iou_thresh: 0.7
+    rpn_bg_iou_thresh: 0.3
+    box_fg_iou_thresh: 0.5
+    box_bg_iou_thresh: 0.5
+    box_score_thresh: 0.05
+    box_nms_thresh: 0.5
+    box_detections_per_img: 100
+    use_keypoints: false
+    num_keypoints: 8
+    use_multiscale: false
+    scales: [600, 800, 1000, 1200]
+    
+  # YOLOv8 configuration (detection-only)
+  yolov8:
+    num_classes: 1  # satellite class (no background)
+    input_channels: 3
+    width_mult: 1.0  # Model scaling factors
+    depth_mult: 1.0
+    confidence_threshold: 0.25
+    iou_threshold: 0.45
+    max_detections: 300
 
 mlflow:
   tracking_uri: "mlruns"
