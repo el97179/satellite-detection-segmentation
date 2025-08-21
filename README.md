@@ -45,3 +45,20 @@ All experiments are tracked using MLflow with:
 - Training and validation metrics
 - Model artifacts and checkpoints
 - Performance visualizations
+
+## 📋 Project Tracking
+
+A built-in project tracking system helps manage development progress:
+- Issues grouped by status: **open**, **in progress**, **under validation**, **closed**
+- Priority levels and assignee management
+- Rich CLI interface with dashboard views
+- Integration with development workflow
+
+```bash
+# Quick project tracking commands
+python project_tracker.py dashboard     # View project status overview
+python project_tracker.py create "New feature"  # Create issue
+python project_tracker.py list --status open   # List open issues
+```
+
+See [docs/PROJECT_TRACKING.md](docs/PROJECT_TRACKING.md) for complete documentation.

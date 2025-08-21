@@ -1,0 +1,38 @@
+# Project tracking configuration
+
+project_tracking:
+  # Default project file location
+  project_file: "project_state.json"
+  
+  # Available statuses (must match models.py)
+  statuses:
+    - "open"
+    - "in progress" 
+    - "under validation"
+    - "closed"
+  
+  # Available priorities (must match models.py)
+  priorities:
+    - "low"
+    - "medium"
+    - "high"
+    - "critical"
+  
+  # Default settings
+  defaults:
+    priority: "medium"
+    status: "open"
+  
+  # Display settings
+  display:
+    max_title_length: 50
+    date_format: "%Y-%m-%d %H:%M"
+    colors:
+      open: "red"
+      in_progress: "yellow"
+      under_validation: "blue" 
+      closed: "green"
+      low: "dim cyan"
+      medium: "cyan"
+      high: "yellow"
+      critical: "red bold"

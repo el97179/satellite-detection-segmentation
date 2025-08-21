@@ -23,6 +23,9 @@ setup(
         "mlflow>=2.4.0",
         "tqdm>=4.65.0",
         "pillow>=9.5.0",
+        "click>=8.1.0",
+        "rich>=13.4.0",
+        "pyyaml>=6.0",
     ],
     extras_require={
         "dev": [
