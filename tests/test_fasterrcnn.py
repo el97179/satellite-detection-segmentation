@@ -1,8 +1,18 @@
 """
-Test script for Mask R-CNN model implementation.
+Test script for Faster R-CNN model implementation.
 
-Tests the Mask R-CNN architecture for satellite detection and segmentation
+Tests the Faster R-CNN architecture for satellite detection
 including forward pass validation, backbone configurations, and inference.
+
+Note: File name kept as test_maskrcnn.py for backward compatibility,
+but actually tests    if passed == tota           logger.info("\\n✅ Faster R-CNN implementation is ready for Issue #6!")if success:
+        logger.info("\\n✅ Faster R-CNN implementation is ready for Issue #6!")
+    else:
+        logger.error("\\n❌ Faster R-CNN implementation needs fixes before PR")       logger.info("🎉 All Faster R-CNN tests passed!")
+        return True
+    else:
+        logger.warning("⚠️  Some Faster R-CNN tests failed")
+        return Falser R-CNN implementation.
 """
 
 import sys
@@ -16,7 +26,7 @@ from pathlib import Path
 # Add src to path for imports
 sys.path.append(str(Path(__file__).parent.parent))
 
-from src.models.cnn.maskrcnn import (
+from src.models.cnn.fasterrcnn import (
     SatelliteMaskRCNN, 
     SatelliteMaskRCNNWithKeypoints,
     MultiScaleMaskRCNN,
@@ -29,10 +39,10 @@ logger = logging.getLogger(__name__)
 
 
 def test_basic_maskrcnn():
-    """Test basic Mask R-CNN functionality."""
-    logger.info("Testing basic Mask R-CNN...")
+    """Test basic Faster R-CNN functionality."""
+    logger.info("Testing basic Faster R-CNN...")
     
-    # Create Mask R-CNN model
+    # Create Faster R-CNN model
     model = SatelliteMaskRCNN(num_classes=2, backbone_name="resnet50")
     model.eval()
     
@@ -52,17 +62,17 @@ def test_basic_maskrcnn():
         assert 'boxes' in pred, f"Prediction {i} missing 'boxes'"
         assert 'labels' in pred, f"Prediction {i} missing 'labels'"
         assert 'scores' in pred, f"Prediction {i} missing 'scores'"
-        assert 'masks' in pred, f"Prediction {i} missing 'masks'"
+        # Note: Faster R-CNN doesn't have masks, so we don't check for them
     
-    logger.info("✓ Basic Mask R-CNN test passed")
+    logger.info("✓ Basic Faster R-CNN test passed")
     logger.info(f"  Parameters: {model.get_num_parameters():,}")
     logger.info(f"  Predictions: {[len(pred['boxes']) for pred in predictions]} detections")
     return True
 
 
 def test_maskrcnn_training_mode():
-    """Test Mask R-CNN in training mode."""
-    logger.info("Testing Mask R-CNN training mode...")
+    """Test Faster R-CNN in training mode."""
+    logger.info("Testing Faster R-CNN training mode...")
     
     model = SatelliteMaskRCNN(num_classes=2, backbone_name="resnet50")
     model.train()
@@ -78,20 +88,20 @@ def test_maskrcnn_training_mode():
     # Forward pass
     losses = model(images, targets)
     
-    # Validate loss dictionary
-    expected_losses = ['loss_classifier', 'loss_box_reg', 'loss_mask', 'loss_objectness', 'loss_rpn_box_reg']
+    # Validate loss dictionary (Faster R-CNN losses)
+    expected_losses = ['loss_classifier', 'loss_box_reg', 'loss_objectness', 'loss_rpn_box_reg']
     for loss_name in expected_losses:
         assert loss_name in losses, f"Missing loss: {loss_name}"
         assert torch.is_tensor(losses[loss_name]), f"{loss_name} is not a tensor"
     
-    logger.info("✓ Mask R-CNN training mode test passed")
+    logger.info("✓ Faster R-CNN training mode test passed")
     logger.info(f"  Losses: {list(losses.keys())}")
     return True
 
 
 def test_maskrcnn_with_keypoints():
-    """Test Mask R-CNN with keypoint detection."""
-    logger.info("Testing Mask R-CNN with keypoints...")
+    """Test Faster R-CNN with keypoint detection."""
+    logger.info("Testing Faster R-CNN with keypoints...")
     
     model = SatelliteMaskRCNNWithKeypoints(num_classes=2, num_keypoints=8)
     model.eval()
@@ -109,17 +119,17 @@ def test_maskrcnn_with_keypoints():
     assert 'boxes' in pred, "Prediction missing 'boxes'"
     assert 'labels' in pred, "Prediction missing 'labels'"
     assert 'scores' in pred, "Prediction missing 'scores'"
-    assert 'masks' in pred, "Prediction missing 'masks'"
+    # Note: Faster R-CNN doesn't have masks
     
-    logger.info("✓ Mask R-CNN with keypoints test passed")
+    logger.info("✓ Faster R-CNN with keypoints test passed")
     logger.info(f"  Parameters: {model.get_num_parameters():,}")
     logger.info(f"  Keypoints: {model.num_keypoints}")
     return True
 
 
 def test_multiscale_maskrcnn():
-    """Test multi-scale Mask R-CNN."""
-    logger.info("Testing multi-scale Mask R-CNN...")
+    """Test multi-scale Faster R-CNN."""
+    logger.info("Testing multi-scale Faster R-CNN...")
     
     scales = [600, 800, 1000]
     model = MultiScaleMaskRCNN(num_classes=2, scales=scales)
@@ -134,15 +144,15 @@ def test_multiscale_maskrcnn():
     # Validate predictions
     assert len(predictions) == 1, f"Expected 1 prediction, got {len(predictions)}"
     
-    logger.info("✓ Multi-scale Mask R-CNN test passed")
+    logger.info("✓ Multi-scale Faster R-CNN test passed")
     logger.info(f"  Parameters: {model.get_num_parameters():,}")
     logger.info(f"  Scales: {scales}")
     return True
 
 
 def test_maskrcnn_different_backbones():
-    """Test Mask R-CNN with different backbones."""
-    logger.info("Testing Mask R-CNN with different backbones...")
+    """Test Faster R-CNN with different backbones."""
+    logger.info("Testing Faster R-CNN with different backbones...")
     
     backbones = ["resnet50"]  # Start with one working backbone
     
@@ -171,8 +181,8 @@ def test_maskrcnn_different_backbones():
 
 
 def test_config_based_creation():
-    """Test creating Mask R-CNN from configuration file."""
-    logger.info("Testing config-based Mask R-CNN creation...")
+    """Test creating Faster R-CNN from configuration file."""
+    logger.info("Testing config-based Faster R-CNN creation...")
     
     # Test configuration
     config = {
@@ -199,7 +209,7 @@ def test_config_based_creation():
         
         assert len(predictions) == 1, "Expected 1 prediction"
         
-        logger.info("✓ Config-based Mask R-CNN creation test passed")
+        logger.info("✓ Config-based Faster R-CNN creation test passed")
         logger.info(f"  Parameters: {model.get_num_parameters():,}")
         return True
         
@@ -235,13 +245,13 @@ def test_backbone_freezing():
 
 
 def run_all_maskrcnn_tests():
-    """Run all Mask R-CNN tests."""
+    """Run all Faster R-CNN tests."""
     logger.info("=" * 60)
-    logger.info("RUNNING MASK R-CNN COMPREHENSIVE TESTS")
+    logger.info("RUNNING FASTER R-CNN COMPREHENSIVE TESTS")
     logger.info("=" * 60)
     
     tests = [
-        ("Basic Mask R-CNN", test_basic_maskrcnn),
+        ("Basic Faster R-CNN", test_basic_maskrcnn),
         ("Training Mode", test_maskrcnn_training_mode),
         ("With Keypoints", test_maskrcnn_with_keypoints),
         ("Multi-scale", test_multiscale_maskrcnn),
@@ -261,7 +271,7 @@ def run_all_maskrcnn_tests():
     
     # Summary
     logger.info("\n" + "=" * 60)
-    logger.info("MASK R-CNN TEST SUMMARY")
+    logger.info("FASTER R-CNN TEST SUMMARY")
     logger.info("=" * 60)
     
     passed = sum(results.values())
@@ -275,7 +285,7 @@ def run_all_maskrcnn_tests():
     logger.info(f"Total: {passed}/{total} tests passed ({(passed/total)*100:.1f}%)")
     
     if passed == total:
-        logger.info("🎉 All Mask R-CNN tests passed!")
+        logger.info("🎉 All Faster R-CNN tests passed!")
         return True
     else:
         logger.warning("⚠️ Some Mask R-CNN tests failed")

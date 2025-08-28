@@ -22,7 +22,7 @@ from src.models.cnn import (
     get_model_info,
     validate_model_config,
     create_unet_satellite_model,
-    create_maskrcnn_satellite_model,
+    create_fasterrcnn_satellite_model,
     create_yolov8_satellite_model
 )
 
@@ -111,11 +111,11 @@ def test_model_forward_pass(model_type: str, config: dict) -> bool:
             with torch.no_grad():
                 output = model(x)
             
-            expected_shape = (2, test_config['model']['unet']['n_classes'], 512, 512)
+            expected_shape = (2, test_config['model']['unet'].get('n_classes', test_config['model']['unet'].get('num_classes', 1)), 512, 512)
             assert output.shape == expected_shape, f"Expected {expected_shape}, got {output.shape}"
             
-        elif model_type == 'maskrcnn':
-            # Mask R-CNN expects list of tensors
+        elif model_type == 'fasterrcnn':
+            # Faster R-CNN expects list of tensors
             images = [torch.randn(3, 800, 800), torch.randn(3, 600, 900)]
             
             with torch.no_grad():
@@ -124,7 +124,7 @@ def test_model_forward_pass(model_type: str, config: dict) -> bool:
                 else:
                     predictions = model(images)
             
-            assert isinstance(predictions, list), "Mask R-CNN should return list of predictions"
+            assert isinstance(predictions, list), "Faster R-CNN should return list of predictions"
             assert len(predictions) == 2, f"Expected 2 predictions, got {len(predictions)}"
             
         elif model_type == 'yolov8':
@@ -151,12 +151,12 @@ def test_convenience_functions() -> bool:
         logger.info("Testing convenience functions...")
         
         # Test U-Net convenience function
-        unet = create_unet_satellite_model(n_classes=3, use_attention=True)
+        unet = create_unet_satellite_model(num_classes=3, use_attention=True)
         assert unet is not None
         
-        # Test Mask R-CNN convenience function  
-        maskrcnn = create_maskrcnn_satellite_model(num_classes=3)
-        assert maskrcnn is not None
+        # Test Faster R-CNN convenience function  
+        fasterrcnn = create_fasterrcnn_satellite_model(num_classes=3)
+        assert fasterrcnn is not None
         
         # Test YOLOv8 convenience function
         yolov8 = create_yolov8_satellite_model(num_classes=3)
@@ -177,7 +177,7 @@ def test_model_factory() -> bool:
         
         # Test listing available models
         available_models = ModelFactory.list_available_models()
-        expected_models = ['unet', 'maskrcnn', 'yolov8']
+        expected_models = ['unet', 'fasterrcnn', 'yolov8']
         
         for model_type in expected_models:
             assert model_type in available_models, f"Model {model_type} not available"
@@ -251,7 +251,7 @@ def run_comprehensive_tests():
     results = {}
     
     # Available model types
-    model_types = ['unet', 'maskrcnn', 'yolov8']
+    model_types = ['unet', 'fasterrcnn', 'yolov8']
     
     # Test model factory
     results['model_factory'] = test_model_factory()
