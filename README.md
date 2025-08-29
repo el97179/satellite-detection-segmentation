@@ -27,8 +27,8 @@ The project uses:
 
 ### Installation
 ```bash
-git clone https://github.com/el97179/satellite-detection-segmentation.git
-cd satellite-detection-segmentation
+git clone https://github.com/el97179/satellite-detection.git
+cd satellite-detection
 pip install -r requirements.txt
 ```
 

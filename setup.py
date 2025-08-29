@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="satellite-detection-segmentation",
+    name="satellite-detection",
     version="0.1.0",
     description="Satellite Detection and Segmentation using CNN and Transformer models",
     author="tanman",

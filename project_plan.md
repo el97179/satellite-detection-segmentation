@@ -2,7 +2,7 @@
 
 ## 📋 Project Overview
 
-**Repository**: https://github.com/el97179/satellite-detection-segmentation  
+**Repository**: https://github.com/el97179/satellite-detection  
 **Start Date**: August 21, 2025  
 **Status**: Active Development - Issue #2 Completed
 
@@ -80,7 +80,7 @@ The project implements satellite detection and segmentation using multiple deep 
 
 #### 10. **GitHub Repository Setup** ✅ COMPLETED
 - **Status**: Repository created with 17 issues
-- **Repository**: https://github.com/el97179/satellite-detection-segmentation
+- **Repository**: https://github.com/el97179/satellite-detection
 - **Description**: Create repository with proper structure, documentation, and issue tracking for each model/framework combination.
 
 ### 🔄 **In Progress / Pending Tasks**
@@ -131,7 +131,7 @@ The project implements satellite detection and segmentation using multiple deep 
 4. **Validation Framework**: Create data validation and integrity checks
 
 ### 🔗 **Key Resources**
-- **Repository**: https://github.com/el97179/satellite-detection-segmentation
+- **Repository**: https://github.com/el97179/satellite-detection
 - **Dataset Path**: `/home/tanman/datasets/playground/NAPA2_Audacity_v2_training/`
 - **Environment Activation**: `source activate_env.sh`
 - **Current Dependencies**: See `requirements_current.txt`
@@ -157,7 +157,7 @@ The project implements satellite detection and segmentation using multiple deep 
 
 ### �� **Project Structure**
 ```
-satellite-detection-segmentation/
+satellite-detection/
 ├── src/
 │   ├── data/          # Dataset utilities (completed)
 │   ├── models/        # Model architectures (pending)

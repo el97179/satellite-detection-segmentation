@@ -1,7 +1,7 @@
 # Base configuration for satellite detection and segmentation
 
 project:
-  name: "satellite-detection-segmentation"
+  name: "satellite-detection"
   version: "0.1.0"
   description: "Satellite detection using CNN models (U-Net, Faster R-CNN, YOLOv8)"
 
