@@ -2,9 +2,22 @@
 Test script for Faster R-CNN model implementation.
 
 Tests the Faster R-CNN architecture for satellite detection
-including forward pass validation, backbone configurations, and inference.
-
-Note: File name kept as test_maskrcnn.py for backward compatibility,
+including forward pass validation, backbone configurations, and infere    # Test configuration
+    config = {
+        'model': {
+            'type': 'fasterrcnn',
+            'fasterrcnn': {
+                'num_classes': 2,
+                'backbone_name': 'resnet50',
+                'pretrained_backbone': True,
+                'min_size': 800,
+                'max_size': 1333
+            }
+        }
+    }
+    
+    try:
+        model = create_fasterrcnn_model(config) Faster R-CNN tests for satellite detection.
 but actually tests    if passed == tota           logger.info("\\n✅ Faster R-CNN implementation is ready for Issue #6!")if success:
         logger.info("\\n✅ Faster R-CNN implementation is ready for Issue #6!")
     else:
@@ -27,10 +40,10 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from src.models.cnn.fasterrcnn import (
-    SatelliteMaskRCNN, 
-    SatelliteMaskRCNNWithKeypoints,
-    MultiScaleMaskRCNN,
-    create_maskrcnn_model
+    SatelliteFasterRCNN, 
+    SatelliteFasterRCNNWithKeypoints,
+    MultiScaleFasterRCNN,
+    create_fasterrcnn_model
 )
 
 # Configure logging
@@ -38,12 +51,12 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 
-def test_basic_maskrcnn():
+def test_basic_fasterrcnn():
     """Test basic Faster R-CNN functionality."""
     logger.info("Testing basic Faster R-CNN...")
     
     # Create Faster R-CNN model
-    model = SatelliteMaskRCNN(num_classes=2, backbone_name="resnet50")
+    model = SatelliteFasterRCNN(num_classes=2, backbone_name="resnet50")
     model.eval()
     
     # Test input (list of images with different sizes)
@@ -70,11 +83,11 @@ def test_basic_maskrcnn():
     return True
 
 
-def test_maskrcnn_training_mode():
+def test_fasterrcnn_training_mode():
     """Test Faster R-CNN in training mode."""
     logger.info("Testing Faster R-CNN training mode...")
     
-    model = SatelliteMaskRCNN(num_classes=2, backbone_name="resnet50")
+    model = SatelliteFasterRCNN(num_classes=2, backbone_name="resnet50")
     model.train()
     
     # Test input with targets
@@ -99,11 +112,11 @@ def test_maskrcnn_training_mode():
     return True
 
 
-def test_maskrcnn_with_keypoints():
+def test_fasterrcnn_with_keypoints():
     """Test Faster R-CNN with keypoint detection."""
     logger.info("Testing Faster R-CNN with keypoints...")
     
-    model = SatelliteMaskRCNNWithKeypoints(num_classes=2, num_keypoints=8)
+    model = SatelliteFasterRCNNWithKeypoints(num_classes=2, num_keypoints=8)
     model.eval()
     
     # Test input
@@ -127,12 +140,12 @@ def test_maskrcnn_with_keypoints():
     return True
 
 
-def test_multiscale_maskrcnn():
+def test_multiscale_fasterrcnn():
     """Test multi-scale Faster R-CNN."""
     logger.info("Testing multi-scale Faster R-CNN...")
     
     scales = [600, 800, 1000]
-    model = MultiScaleMaskRCNN(num_classes=2, scales=scales)
+    model = MultiScaleFasterRCNN(num_classes=2, scales=scales)
     model.eval()
     
     # Test input
@@ -150,7 +163,7 @@ def test_multiscale_maskrcnn():
     return True
 
 
-def test_maskrcnn_different_backbones():
+def test_fasterrcnn_different_backbones():
     """Test Faster R-CNN with different backbones."""
     logger.info("Testing Faster R-CNN with different backbones...")
     
@@ -160,7 +173,7 @@ def test_maskrcnn_different_backbones():
         logger.info(f"Testing backbone: {backbone}")
         
         try:
-            model = SatelliteMaskRCNN(num_classes=2, backbone_name=backbone)
+            model = SatelliteFasterRCNN(num_classes=2, backbone_name=backbone)
             model.eval()
             
             # Test input
@@ -187,8 +200,8 @@ def test_config_based_creation():
     # Test configuration
     config = {
         'model': {
-            'type': 'maskrcnn',
-            'maskrcnn': {
+            'type': 'fasterrcnn',
+            'fasterrcnn': {
                 'num_classes': 2,
                 'backbone_name': 'resnet50',
                 'pretrained_backbone': True,
@@ -199,7 +212,7 @@ def test_config_based_creation():
     }
     
     try:
-        model = create_maskrcnn_model(config)
+        model = create_fasterrcnn_model(config)
         model.eval()
         
         # Test forward pass
@@ -222,7 +235,7 @@ def test_backbone_freezing():
     """Test backbone freezing functionality."""
     logger.info("Testing backbone freezing...")
     
-    model = SatelliteMaskRCNN(num_classes=2, backbone_name="resnet50")
+    model = SatelliteFasterRCNN(num_classes=2, backbone_name="resnet50")
     
     # Check initial state (should be trainable)
     backbone_params_before = sum(p.numel() for p in model.model.backbone.parameters() if p.requires_grad)
@@ -244,18 +257,18 @@ def test_backbone_freezing():
     return True
 
 
-def run_all_maskrcnn_tests():
+def run_all_fasterrcnn_tests():
     """Run all Faster R-CNN tests."""
     logger.info("=" * 60)
     logger.info("RUNNING FASTER R-CNN COMPREHENSIVE TESTS")
     logger.info("=" * 60)
     
     tests = [
-        ("Basic Faster R-CNN", test_basic_maskrcnn),
-        ("Training Mode", test_maskrcnn_training_mode),
-        ("With Keypoints", test_maskrcnn_with_keypoints),
-        ("Multi-scale", test_multiscale_maskrcnn),
-        ("Different Backbones", test_maskrcnn_different_backbones),
+        ("Basic Faster R-CNN", test_basic_fasterrcnn),
+        ("Training Mode", test_fasterrcnn_training_mode),
+        ("With Keypoints", test_fasterrcnn_with_keypoints),
+        ("Multi-scale", test_multiscale_fasterrcnn),
+        ("Different Backbones", test_fasterrcnn_different_backbones),
         ("Config-based Creation", test_config_based_creation),
         ("Backbone Freezing", test_backbone_freezing),
     ]
@@ -288,7 +301,7 @@ def run_all_maskrcnn_tests():
         logger.info("🎉 All Faster R-CNN tests passed!")
         return True
     else:
-        logger.warning("⚠️ Some Mask R-CNN tests failed")
+        logger.warning("⚠️ Some Faster R-CNN tests failed")
         return False
 
 
@@ -298,12 +311,12 @@ if __name__ == "__main__":
     logger.info(f"Using device: {device}")
     
     # Run tests
-    success = run_all_maskrcnn_tests()
+    success = run_all_fasterrcnn_tests()
     
     if success:
-        logger.info("\n✅ Mask R-CNN implementation is ready for Issue #6!")
+        logger.info("\n✅ Faster R-CNN implementation is ready for Issue #6!")
     else:
-        logger.error("\n❌ Mask R-CNN implementation needs fixes before PR")
+        logger.error("\n❌ Faster R-CNN implementation needs fixes before PR")
     
     # Exit with appropriate code
     sys.exit(0 if success else 1)

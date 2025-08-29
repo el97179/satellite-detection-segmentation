@@ -19,8 +19,7 @@ logger = logging.getLogger(__name__)
 # Model registry
 MODEL_REGISTRY = {
     'unet': create_unet_model,
-    'fasterrcnn': create_fasterrcnn_model,  # primary name
-    'maskrcnn': create_fasterrcnn_model,    # alias for tests expecting 'maskrcnn'
+    'fasterrcnn': create_fasterrcnn_model,
     'yolov8': create_yolov8_model,
 }
 
@@ -114,9 +113,6 @@ def create_model_from_config(config: Dict[str, Any]) -> nn.Module:
     """
     model_config = config.get('model', {})
     model_type = model_config.get('type', 'unet')
-    # Normalise alias
-    if model_type == 'maskrcnn':
-        model_type = 'fasterrcnn'
     
     return ModelFactory.create_model(model_type, config)
 
@@ -178,8 +174,8 @@ def validate_model_config(config: Dict[str, Any]) -> bool:
             if key not in unet_config:
                 logger.warning("UNet config missing optional key: %s", key)
     
-    elif model_type in ('fasterrcnn', 'maskrcnn'):
-        fasterrcnn_config = model_config.get('fasterrcnn', model_config.get('maskrcnn', {}))
+    elif model_type == 'fasterrcnn':
+        fasterrcnn_config = model_config.get('fasterrcnn', {})
         if 'num_classes' in fasterrcnn_config and fasterrcnn_config['num_classes'] < 2:
             raise ValueError("Faster R-CNN must have at least 2 classes (including background)")
     
