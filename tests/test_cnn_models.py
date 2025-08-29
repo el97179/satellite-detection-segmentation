@@ -43,7 +43,7 @@ def load_config(config_path: str = "configs/base_config.yaml") -> dict:
         return {}
 
 
-def test_model_creation(model_type: str, config: dict) -> bool:
+def _test_model_creation(model_type: str, config: dict) -> bool:
     """
     Test model creation for a specific type.
     
@@ -81,7 +81,7 @@ def test_model_creation(model_type: str, config: dict) -> bool:
         return False
 
 
-def test_model_forward_pass(model_type: str, config: dict) -> bool:
+def _test_model_forward_pass(model_type: str, config: dict) -> bool:
     """
     Test forward pass for a specific model.
     
@@ -145,96 +145,118 @@ def test_model_forward_pass(model_type: str, config: dict) -> bool:
         return False
 
 
-def test_convenience_functions() -> bool:
-    """Test convenience functions for creating models."""
-    try:
-        logger.info("Testing convenience functions...")
-        
-        # Test U-Net convenience function
-        unet = create_unet_satellite_model(num_classes=3, use_attention=True)
-        assert unet is not None
-        
-        # Test Faster R-CNN convenience function  
-        fasterrcnn = create_fasterrcnn_satellite_model(num_classes=3)
-        assert fasterrcnn is not None
-        
-        # Test YOLOv8 convenience function
-        yolov8 = create_yolov8_satellite_model(num_classes=3)
-        assert yolov8 is not None
-        
-        logger.info("✓ Convenience functions work correctly")
-        return True
-        
-    except Exception as e:
-        logger.error("✗ Convenience functions failed: %s", e)
-        return False
-
-
-def test_model_factory() -> bool:
-    """Test ModelFactory functionality."""
-    try:
-        logger.info("Testing ModelFactory...")
-        
-        # Test listing available models
-        available_models = ModelFactory.list_available_models()
-        expected_models = ['unet', 'fasterrcnn', 'yolov8']
-        
-        for model_type in expected_models:
-            assert model_type in available_models, f"Model {model_type} not available"
-        
-        logger.info("✓ ModelFactory works correctly")
-        logger.info("  Available models: %s", available_models)
-        return True
-        
-    except Exception as e:
-        logger.error("✗ ModelFactory failed: %s", e)
-        return False
-
-
-def test_configuration_validation() -> bool:
-    """Test configuration validation."""
-    try:
-        logger.info("Testing configuration validation...")
-        
-        # Test valid configuration
-        valid_config = {
+def test_model_creation():
+    """Test that all model types can be created successfully."""
+    config = load_config()
+    if not config:
+        # Use default config if loading fails
+        config = {
             'model': {
                 'type': 'unet',
-                'unet': {
-                    'n_channels': 3,
-                    'n_classes': 2
-                }
+                'unet': {'n_channels': 3, 'n_classes': 2},
+                'fasterrcnn': {'num_classes': 2},
+                'yolov8': {'num_classes': 1}
             }
         }
-        
-        assert validate_model_config(valid_config)
-        
-        # Test invalid configuration (missing model section)
-        try:
-            invalid_config = {'data': {}}
-            validate_model_config(invalid_config)
-            assert False, "Should have raised ValueError"
-        except ValueError:
-            pass  # Expected
-        
-        # Test invalid model type
-        try:
-            invalid_type_config = {
-                'model': {
-                    'type': 'invalid_model'
-                }
+    
+    model_types = ['unet', 'fasterrcnn', 'yolov8']
+    for model_type in model_types:
+        result = _test_model_creation(model_type, config)
+        assert result, f"Failed to create {model_type} model"
+
+
+def test_model_forward_pass():
+    """Test that all model types can perform forward pass successfully."""
+    config = load_config()
+    if not config:
+        # Use default config if loading fails
+        config = {
+            'model': {
+                'type': 'unet',
+                'unet': {'n_channels': 3, 'n_classes': 2},
+                'fasterrcnn': {'num_classes': 2},
+                'yolov8': {'num_classes': 1}
             }
-            validate_model_config(invalid_type_config)
-            assert False, "Should have raised ValueError"
-        except ValueError:
-            pass  # Expected
-        
-        logger.info("✓ Configuration validation works correctly")
-        return True
-        
-    except Exception as e:
-        logger.error("✗ Configuration validation failed: %s", e)
-        return False
+        }
+    
+    model_types = ['unet', 'fasterrcnn', 'yolov8']
+    for model_type in model_types:
+        result = _test_model_forward_pass(model_type, config)
+        assert result, f"Failed forward pass for {model_type} model"
+
+
+def test_convenience_functions():
+    """Test convenience functions for creating models."""
+    logger.info("Testing convenience functions...")
+    
+    # Test U-Net convenience function
+    unet = create_unet_satellite_model(num_classes=3, use_attention=True)
+    assert unet is not None
+    
+    # Test Faster R-CNN convenience function  
+    fasterrcnn = create_fasterrcnn_satellite_model(num_classes=3)
+    assert fasterrcnn is not None
+    
+    # Test YOLOv8 convenience function
+    yolov8 = create_yolov8_satellite_model(num_classes=3)
+    assert yolov8 is not None
+    
+    logger.info("✓ Convenience functions work correctly")
+
+
+def test_model_factory():
+    """Test ModelFactory functionality."""
+    logger.info("Testing ModelFactory...")
+    
+    # Test listing available models
+    available_models = ModelFactory.list_available_models()
+    expected_models = ['unet', 'fasterrcnn', 'yolov8']
+    
+    for model_type in expected_models:
+        assert model_type in available_models, f"Model {model_type} not available"
+    
+    logger.info("✓ ModelFactory works correctly")
+    logger.info("  Available models: %s", available_models)
+
+
+def test_configuration_validation():
+    """Test configuration validation."""
+    logger.info("Testing configuration validation...")
+    
+    # Test valid configuration
+    valid_config = {
+        'model': {
+            'type': 'unet',
+            'unet': {
+                'n_channels': 3,
+                'n_classes': 2
+            }
+        }
+    }
+    
+    assert validate_model_config(valid_config)
+    
+    # Test invalid configuration (missing model section)
+    try:
+        invalid_config = {'data': {}}
+        validate_model_config(invalid_config)
+        assert False, "Should have raised ValueError"
+    except ValueError:
+        pass  # Expected
+    
+    # Test invalid model type
+    try:
+        invalid_type_config = {
+            'model': {
+                'type': 'invalid_model'
+            }
+        }
+        validate_model_config(invalid_type_config)
+        assert False, "Should have raised ValueError"
+    except ValueError:
+        pass  # Expected
+    
+    logger.info("✓ Configuration validation works correctly")
 
 
 def run_comprehensive_tests():
@@ -269,12 +291,12 @@ def run_comprehensive_tests():
         logger.info("="*50)
         
         # Test model creation
-        creation_result = test_model_creation(model_type, config)
+        creation_result = _test_model_creation(model_type, config)
         results[f'{model_type}_creation'] = creation_result
         
         # Test forward pass (only if creation succeeded)
         if creation_result:
-            forward_result = test_model_forward_pass(model_type, config)
+            forward_result = _test_model_forward_pass(model_type, config)
             results[f'{model_type}_forward'] = forward_result
         else:
             results[f'{model_type}_forward'] = False

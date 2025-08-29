@@ -146,9 +146,11 @@ class SatelliteFasterRCNN(nn.Module):
             Backbone network with FPN
         """
         if backbone_name.startswith('resnet'):
+            # Use weights parameter instead of deprecated pretrained
+            weights = 'DEFAULT' if pretrained else None
             backbone = resnet_fpn_backbone(
                 backbone_name=backbone_name,
-                pretrained=pretrained,
+                weights=weights,
                 trainable_layers=trainable_layers
             )
         else:
